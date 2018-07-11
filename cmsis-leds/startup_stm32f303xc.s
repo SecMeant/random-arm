@@ -77,6 +77,8 @@ Reset_Handler:
 
 /* Copy the data segment initializers from flash to SRAM */
   movs	r1, #0
+	ldr	r0, =_sdata
+	ldr	r3, =_edata
   b	LoopCopyDataInit
 
 CopyDataInit:
@@ -86,8 +88,6 @@ CopyDataInit:
 	adds	r1, r1, #4
 
 LoopCopyDataInit:
-	ldr	r0, =_sdata
-	ldr	r3, =_edata
 	adds	r2, r0, r1
 	cmp	r2, r3
 	bcc	CopyDataInit
