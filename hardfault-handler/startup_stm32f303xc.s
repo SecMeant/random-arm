@@ -1,12 +1,10 @@
-  .syntax unified
-	.cpu cortex-m4
-	.fpu softvfp
-	.thumb
+.syntax unified
+.cpu cortex-m4
+.fpu softvfp
+.thumb
 
 .global	g_pfnVectors
 .global	Default_Handler
-
-.extern UsageFault_Handler
 
 /* start address for the initialization values of the .data section.
 defined in linker script */

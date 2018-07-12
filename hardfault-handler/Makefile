@@ -3,9 +3,7 @@ OPT = -Og
 BUILD_DIR = build
 
 C_SOURCES =  \
-Src/system_stm32f3xx.c \
 Src/main.c \
-Src/stm32f3xx_it.c
 
 ASM_SOURCES =  \
 startup_stm32f303xc.s

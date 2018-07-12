@@ -1,5 +1,6 @@
 #include "stm32f3xx_hal.h"
 
+// Helper functions
 void delay(int t);
 void circle();
 void circleT(int T);
@@ -7,9 +8,13 @@ void circleTC(int T, int C);
 void flashT(int T);
 void invalidInstr(){asm volatile (".word 0xf7f0a000\n");}
 
+// Interrupt handlers
+void HardFault_Handler(void);
+
 int main(void)
 {
 	circleTC(75000, 32);
+
 	// Causes hardfault handler to be invoked
 	invalidInstr();
 }
@@ -105,4 +110,12 @@ void delay(int t)
 	{
 		j++;
 	}
+}
+
+void HardFault_Handler(void)
+{
+  while (1)
+  {
+		flashT(200000);
+  }
 }
