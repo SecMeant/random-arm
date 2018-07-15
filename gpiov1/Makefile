@@ -9,8 +9,8 @@ ASM_SOURCES =  \
 startup_stm32f303xc.s
 
 PREFIX = arm-none-eabi-
-CC = $(PREFIX)gcc
-AS = $(PREFIX)gcc -x assembler-with-cpp
+CC = $(PREFIX)g++
+AS = $(PREFIX)g++ -x assembler-with-cpp
 CP = $(PREFIX)objcopy
 AR = $(PREFIX)ar
 SZ = $(PREFIX)size
