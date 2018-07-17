@@ -14,7 +14,7 @@ Src/main.c \
 ASM_SOURCES =  \
 startup_stm32f303xc.s
 
-PREFIX = arm-none-eabi-
+PREFIX = /home/holz/Downloads/arm/gcc-arm-none-eabi-7-2018-q2-update/bin/arm-none-eabi-
 CC = $(PREFIX)g++
 AS = $(PREFIX)g++ -x assembler-with-cpp
 CP = $(PREFIX)objcopy
