@@ -1,4 +1,4 @@
-#include "stm32f3xx_hal.h"
+#include "stm32hal.h"
 
 extern "C"
 {
@@ -6,7 +6,7 @@ extern "C"
 void delay(int t);
 void circle();
 void circleT(int T);
-void circleTC(int T, int C, GPIO_TypeDef* port = GPIOE);
+void circleTC(int T, int C, GPIO* port = GPIOE);
 void circleTC_BSRR(int T, int C);
 void flashT(int T);
 bool isB1Clicked(void);
@@ -26,6 +26,7 @@ int main(void)
 	
 	unsigned cnt = 0;
 
+	GPIOE->ODR = (cnt << 8) & 0x0000ff00;
 	while(1)
 	{
 		if(isB1Clicked())
@@ -60,7 +61,7 @@ void circleT(int T)
 	}
 }
 
-void circleTC(int T, int C, GPIO_TypeDef* port)
+void circleTC(int T, int C, GPIO* port)
 {
 	// Used for turning on leds
 	unsigned leds = 0x00000100;

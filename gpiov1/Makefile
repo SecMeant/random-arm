@@ -2,6 +2,12 @@ TARGET = test2
 OPT = -Og
 BUILD_DIR = build
 
+ifeq ($(OS),Windows_NT)
+	$(RM) = del /Q /F
+else
+	$(RM) = rm
+endif
+
 C_SOURCES =  \
 Src/main.c \
 
@@ -83,5 +89,5 @@ $(BUILD_DIR):
 	mkdir $@		
 
 clean:
-	del /F /Q build\*
+	$(RM) build/*
  

@@ -2,6 +2,12 @@ TARGET = test2
 OPT = -Og
 BUILD_DIR = build
 
+ifeq ($(OS),Windows_NT)
+	$(RM) = del /Q /F
+else
+	$(RM) = rm
+endif
+
 C_SOURCES =  \
 Src/main.c \
 
@@ -37,10 +43,7 @@ SHARED_INCLUDE_PREFIX = "C:/Program Files/shared/include/stm32_spl"
 
 C_INCLUDES =  \
 -IInc \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/STM32F3xx_HAL_Driver/Inc \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/CMSIS/Device/ST/STM32F3xx/Include \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/CMSIS/Include
+-I../shared/Inc
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
@@ -87,5 +90,5 @@ $(BUILD_DIR):
 	mkdir $@		
 
 clean:
-	del /F /Q build\*
+	$(RM) build/*
  
