@@ -37,10 +37,6 @@ SHARED_INCLUDE_PREFIX = "C:/Program Files/shared/include/stm32_spl"
 
 C_INCLUDES =  \
 -I../shared/Inc \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/STM32F3xx_HAL_Driver/Inc \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/CMSIS/Device/ST/STM32F3xx/Include \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/CMSIS/Include
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections

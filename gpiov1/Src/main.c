@@ -2,7 +2,7 @@
  * PC0 AND PA0 PINS TOGETHER. CLICK USER BUTTON 
  * TO MAKE LEDS SHINE BRIGHT !*/
 
-#include "stm32f3xx_hal.h"
+#include "stm32hal.h"
 
 extern "C"
 {
@@ -10,7 +10,7 @@ extern "C"
 void delay(int t);
 void circle();
 void circleT(int T);
-void circleTC(int T, int C, GPIO_TypeDef* port = GPIOE);
+void circleTC(int T, int C, GPIO* port = GPIOE);
 void circleTC_BSRR(int T, int C);
 void flashT(int T);
 bool isB1Clicked(void);
@@ -64,7 +64,7 @@ void circleT(int T)
 	}
 }
 
-void circleTC(int T, int C, GPIO_TypeDef* port)
+void circleTC(int T, int C, GPIO* port)
 {
 	// Used for turning on leds
 	unsigned leds = 0x00000100;
@@ -75,7 +75,7 @@ void circleTC(int T, int C, GPIO_TypeDef* port)
 		// Sets leds on
 		// 0x0000XX00 --> XX is 8 bit long and describes states
 		// if 8 leds on board. 1 - set, 0 - reset
-		GPIOE->ODR = leds;
+		port->ODR = leds;
 
 		leds <<= 1;
 
