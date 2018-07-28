@@ -77,6 +77,8 @@ struct BCTIM
 	unsigned SR;
 	unsigned EGR;
 	unsigned RESERVED2;
+	unsigned RESERVED3;
+	unsigned RESERVED4;
 	unsigned CNT;
 	unsigned PSC;
 	unsigned ARR;
