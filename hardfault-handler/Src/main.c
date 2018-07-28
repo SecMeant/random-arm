@@ -9,8 +9,11 @@ void circleTC_BSRR(int T, int C);
 void flashT(int T);
 void invalidInstr(){asm volatile (".word 0xf7f0a000\n");}
 
-// Interrupt handlers
-void HardFault_Handler(void);
+extern "C"
+{
+	// Interrupt handlers
+	void HardFault_Handler(void);
+}
 
 void initGPIO(void);
 
@@ -20,10 +23,12 @@ int main(void)
 {
 	initGPIO();
 
-	circleTC_BSRR(50000, 32);
+	circleTC_BSRR(25000, 32);
 
 	// Causes hardfault handler to be invoked
 	invalidInstr();
+
+	circleTC_BSRR(50000, 32);
 }
 
 void circleT(int T)
