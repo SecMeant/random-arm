@@ -83,22 +83,34 @@ struct BCTIM
 	unsigned PSC;
 	unsigned ARR;
 
-	void reset(void);
-
 	void init(void);
+
+	void reset(void);
 }*TIM6 = (BCTIM*)0x40001000, *TIM7 = (BCTIM*)0x40001400;
 
 
-void BCTIM::reset(void)
+void BCTIM::init(void)
 {
-	CR1 = 0;
-	CR2 = 0;
-	DIER = 0;
-	SR = 0;
-	EGR = 0;
-	CNT = 0;
-	PSC = 0;
-	ARR = 0xFFFF;
+	this->CR1 = 0;
+	this->CR2 = 0;
+	this->DIER = 0;
+	this->SR = 0;
+	this->EGR = 0;
+	this->CNT = 0;
+	this->PSC = 0;
+	this->ARR = 0xFFFF;
+}
+
+void BCTIM::reset(void)
+{	
+	// stop
+	this->CR1 &= ~1;
+
+	// reset counting
+	this->CNT = 0;
+
+	// start
+	this->CR1 |= 1;
 }
 
 #endif //STM32HAL_H
