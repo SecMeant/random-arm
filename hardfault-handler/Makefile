@@ -2,6 +2,12 @@ TARGET = test2
 OPT = -Og
 BUILD_DIR = build
 
+ifeq ($(OS),Windows_NT)
+	$(RM) = del /Q /F
+else
+	$(RM) = rm
+endif
+
 C_SOURCES =  \
 Src/main.c \
 
@@ -9,8 +15,8 @@ ASM_SOURCES =  \
 startup_stm32f303xc.s
 
 PREFIX = arm-none-eabi-
-CC = $(PREFIX)gcc
-AS = $(PREFIX)gcc -x assembler-with-cpp
+CC = $(PREFIX)g++
+AS = $(PREFIX)g++ -x assembler-with-cpp
 CP = $(PREFIX)objcopy
 AR = $(PREFIX)ar
 SZ = $(PREFIX)size
@@ -32,20 +38,14 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 C_DEFS =  \
 -DUSE_HAL_DRIVER \
 -DSTM32F303xC
-# C includes
-SHARED_INCLUDE_PREFIX = "C:/Program Files/shared/include/stm32_spl"
 
 C_INCLUDES =  \
 -I../shared/Inc \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/STM32F3xx_HAL_Driver/Inc \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/CMSIS/Device/ST/STM32F3xx/Include \
--I$(SHARED_INCLUDE_PREFIX)/Drivers/CMSIS/Include
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -ggdb
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
@@ -87,5 +87,8 @@ $(BUILD_DIR):
 	mkdir $@		
 
 clean:
-	del /F /Q build\*
+	$(RM) build/*
  
+flash:
+	st-flash --reset --format ihex write build/test2.hex
+

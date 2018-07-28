@@ -1,4 +1,4 @@
-#include "stm32f3xx_hal.h"
+#include "stm32hal.h"
 
 // Helper functions
 void delay(int t);
