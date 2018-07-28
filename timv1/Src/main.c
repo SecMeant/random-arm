@@ -19,8 +19,6 @@ void HardFault_Handler(void);
 void initGPIO(void);
 void initADTIM(void);
 void initBCTIM(void);
-void startTIM6(void);
-void startTIM1(void);
 int getCounter(BCTIM *tim);
 }
 
@@ -30,17 +28,23 @@ int main(void)
 {
 	initGPIO();
 	initBCTIM();
-	startTIM1();
-	
-	int cnt;
+	TIM6->init();
+
+	// CNT is clocked with 8MHz so with this config
+	// Clock is flashing about every 2 secs
+	TIM6->PSC = 0xffff;
+	TIM6->ARR = 0x0100;
+	TIM6->reset();	
+
 	while(1)
 	{
-		if(isB1Clicked())
+		// Wait for counter overflow
+		if(TIM6->SR & 1)
 		{
-			cnt = getCounter(TIM6);
-
-			if(TIM6->SR & 1)
-				GPIOE->ODR = 0x0000ff00;
+			GPIOE->ODR = 0x0000ff00;
+			TIM6->SR = 0;
+			delay(70000);
+			GPIOE->ODR = 0;
 		}
 	}
 }
@@ -190,11 +194,11 @@ void initBCTIM(void)
 	// TIM6 enable
 	RCC->APB1ENR |= (1<<4);
 
-	TIM6->CR1 |= 0x888;
-	TIM6->DIER |= 1;
-	TIM6->EGR = 1;
-	TIM6->PSC = 0;
-	TIM6->ARR = 0x000f;
+	TIM6->init();
+
+	TIM6->EGR = 0;
+	TIM6->PSC = 0xffff;
+	TIM6->ARR = 0x1f00;
 }
 
 void startTIM6(void)

@@ -14,7 +14,7 @@ Src/main.c \
 ASM_SOURCES =  \
 startup_stm32f303xc.s
 
-PREFIX = /home/holz/Downloads/arm/gcc-arm-none-eabi-7-2018-q2-update/bin/arm-none-eabi-
+PREFIX = arm-none-eabi-
 CC = $(PREFIX)g++
 AS = $(PREFIX)g++ -x assembler-with-cpp
 CP = $(PREFIX)objcopy
@@ -38,8 +38,6 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 C_DEFS =  \
 -DUSE_HAL_DRIVER \
 -DSTM32F303xC
-# C includes
-SHARED_INCLUDE_PREFIX = "C:/Program Files/shared/include/stm32_spl"
 
 C_INCLUDES =  \
 -I../shared/Inc \
@@ -47,7 +45,7 @@ C_INCLUDES =  \
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -ggdb
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
@@ -91,3 +89,6 @@ $(BUILD_DIR):
 clean:
 	$(RM) build/*
  
+flash:
+	st-flash --reset --format ihex write build/test2.hex
+
