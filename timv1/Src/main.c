@@ -16,6 +16,7 @@ void invalidInstr(){asm volatile (".word 0xf7f0a000\n");}
 // Interrupt handlers
 void HardFault_Handler(void);
 
+void initClock(void);
 void initGPIO(void);
 void initADTIM(void);
 void initBCTIM(void);
@@ -26,6 +27,7 @@ int getCounter(BCTIM *tim);
 
 int main(void)
 {
+	initClock();
 	initGPIO();
 	initBCTIM();
 	TIM6->init();
@@ -33,7 +35,7 @@ int main(void)
 	// CNT is clocked with 8MHz so with this config
 	// Clock is flashing about every 2 secs
 	TIM6->PSC = 0xffff;
-	TIM6->ARR = 0x0100;
+	TIM6->ARR = 0x03fc;
 	TIM6->reset();	
 
 	while(1)
@@ -43,7 +45,7 @@ int main(void)
 		{
 			GPIOE->ODR = 0x0000ff00;
 			TIM6->SR = 0;
-			delay(70000);
+			delay(20000);
 			GPIOE->ODR = 0;
 		}
 	}
@@ -153,6 +155,39 @@ void HardFault_Handler(void)
   {
 		flashT(200000);
   }
+}
+
+void initClock(void)
+{
+	//       Reset state | Enable HSE
+	RCC->CR = 0x00000083 | 0x00010000;
+
+	// Wait for hse ready
+	while(not(RCC->CR & 0x00020000));
+
+	// disable pll
+	RCC->CFGR &= 0xfeffffff;
+
+	// Wait for pll stop
+	while((RCC->CR & 0x02000000));
+
+	// PLL divide before MCO, MCO output to PLL | pll mul x 6, source HSE
+	// use pll as sysclk
+	// For some reason crushing at pll mul x 7, must exceeding 72 mhz
+	// but how... 
+	RCC->CFGR |= 0x17000000 | 0x00110002;
+
+	// APB prescalers to not divided
+	RCC->CFGR &= 0xffffc0ff;
+
+	// pll to sys clock
+	RCC->CFGR |= 0x0000000a;
+
+	// enable pll
+	RCC->CR |= 0x01000000;
+
+	// Wait for pll ready
+	while(not(RCC->CR & 0x02000000));
 }
 
 void initGPIO(void)
