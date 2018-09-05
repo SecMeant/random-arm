@@ -40,12 +40,11 @@ int main(void)
 
 	while(1)
 	{
-		// Wait for counter overflow
 		if(TIM6->SR & 1)
 		{
 			GPIOE->ODR = 0x0000ff00;
 			TIM6->SR = 0;
-			delay(20000);
+			delay(1000000);
 			GPIOE->ODR = 0;
 		}
 	}
@@ -171,18 +170,16 @@ void initClock(void)
 	// Wait for pll stop
 	while((RCC->CR & 0x02000000));
 
-	// PLL divide before MCO, MCO output to PLL | pll mul x 6, source HSE
-	// use pll as sysclk
-	// For some reason crushing at pll mul x 7, must exceeding 72 mhz
-	// but how... 
-	RCC->CFGR |= 0x17000000 | 0x00110002;
-
-	// APB prescalers to not divided
-	RCC->CFGR &= 0xffffc0ff;
-
-	// pll to sys clock
-	RCC->CFGR |= 0x0000000a;
-
+	//RCC->CFGR = 0x00090000 // PLL * 4
+	//RCC->CFGR = 0x000d0000 // PLL * 5
+	//RCC->CFGR = 0x00110000 // PLL * 6
+	
+  RCC->CFGR = 0x00110000 | // PLL multiplied by 6 ( for some reason crashing when higher ;/ )
+              0x00800000 | // I2S is clocked by external clock
+              0x00400000 | // USB not prescaled
+              0x00000400 | // APB1 bus clk is divided by 2
+              0x00000002;  // PLL clk for sysclk
+ 
 	// enable pll
 	RCC->CR |= 0x01000000;
 
