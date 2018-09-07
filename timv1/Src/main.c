@@ -30,20 +30,24 @@ int main(void)
 	initClock();
 	initGPIO();
 	initBCTIM();
-	TIM6->init();
+	TIM7->init();
+
+	// enable tim7 iterrupt
+	NVIC->ISER1 |= 1<<23;
+	TIM7->DIER = 1;
 
 	// CNT is clocked with 8MHz so with this config
 	// Clock is flashing about every 2 secs
-	TIM6->PSC = 0xffff;
-	TIM6->ARR = 0x03fc;
-	TIM6->reset();	
+	TIM7->PSC = 0xffff;
+	TIM7->ARR = 0x03fc;
+	TIM7->reset();	
 
 	while(1)
 	{
-		if(TIM6->SR & 1)
+		if(TIM7->SR & 1)
 		{
 			GPIOE->ODR = 0x0000ff00;
-			TIM6->SR = 0;
+			TIM7->SR = 0;
 			delay(1000000);
 			GPIOE->ODR = 0;
 		}
@@ -223,19 +227,20 @@ void startTIM1(void)
 
 void initBCTIM(void)
 {
-	// TIM6 enable
-	RCC->APB1ENR |= (1<<4);
+	// TIM7 enable
+	RCC->APB1ENR |= (1<<5);
 
-	TIM6->init();
+	TIM7->init();
 
-	TIM6->EGR = 0;
-	TIM6->PSC = 0xffff;
-	TIM6->ARR = 0x1f00;
+	TIM7->EGR &= ~1;
+	TIM7->DIER = 1; // Enable interrupt generation
+	TIM7->PSC = 0xffff;
+	TIM7->ARR = 0x1f00;
 }
 
-void startTIM6(void)
+void startTIM7(void)
 {
-	TIM6->CR1 |= 1;
+	TIM7->CR1 |= 1;
 }
 
 int getCounter(BCTIM *tim)
