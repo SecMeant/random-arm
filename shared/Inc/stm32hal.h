@@ -18,12 +18,12 @@ struct GPIO
 	uint32_t BRR;
 };
 
-GPIO *GPIOA = (GPIO*)(0x48000000);
-GPIO *GPIOB = (GPIO*)(0x48000400);
-GPIO *GPIOC = (GPIO*)(0x48000800);
-GPIO *GPIOD = (GPIO*)(0x48000C00);
-GPIO *GPIOE = (GPIO*)(0x48001000);
-GPIO *GPIOF = (GPIO*)(0x48001400);
+volatile GPIO *GPIOA = (GPIO*)(0x48000000);
+volatile GPIO *GPIOB = (GPIO*)(0x48000400);
+volatile GPIO *GPIOC = (GPIO*)(0x48000800);
+volatile GPIO *GPIOD = (GPIO*)(0x48000C00);
+volatile GPIO *GPIOE = (GPIO*)(0x48001000);
+volatile GPIO *GPIOF = (GPIO*)(0x48001400);
 
 struct RCC_
 {
@@ -40,7 +40,9 @@ struct RCC_
 	uint32_t AHBRSTR;
 	uint32_t CFGR2;
 	uint32_t CFGR3;
-}*RCC = (RCC_*)(0x40021000);
+};
+
+volatile RCC_ *RCC = (RCC_*)(0x40021000);
 
 struct ADTIM
 {
@@ -68,7 +70,11 @@ struct ADTIM
 	uint32_t CCMR3;
 	uint32_t CCR5;
 	uint32_t CCR6;
-}*TIM1 = (ADTIM*)0x40012C00, *TIM8 = (ADTIM*)0x40013400, *TIM20 = (ADTIM*)0x40015000;
+};
+
+volatile ADTIM* TIM1 = (ADTIM*)0x40012C00;
+volatile ADTIM* TIM8 = (ADTIM*)0x40013400;
+volatile ADTIM* TIM20 = (ADTIM*)0x40015000;
 
 struct BCTIM
 {
@@ -85,10 +91,13 @@ struct BCTIM
 	uint32_t PSC;
 	uint32_t ARR;
 
-	void init(void);
-	void reset(void);
+	void init(void) volatile;
+	void reset(void) volatile;
 
-}*TIM6 = (BCTIM*)0x40001000, *TIM7 = (BCTIM*)0x40001400;
+};
+
+volatile BCTIM* TIM6 = (BCTIM*)0x40001000;
+volatile BCTIM* TIM7 = (BCTIM*)0x40001400;
 
 struct _NVIC
 {
@@ -207,10 +216,11 @@ struct _NVIC
 	// Interrupt priority register
 	#include "nvic_priority_reg.h"
 
-}*NVIC=(_NVIC*)0xe000e004;
+};
 
+volatile _NVIC* NVIC=(_NVIC*)0xe000e004;
 
-void BCTIM::init(void)
+void BCTIM::init(void) volatile
 {
 	this->CR1 = 0;
 	this->CR2 = 0;
@@ -222,7 +232,7 @@ void BCTIM::init(void)
 	this->ARR = 0xFFFF;
 }
 
-void BCTIM::reset(void)
+void BCTIM::reset(void) volatile
 {	
 	// stop
 	this->CR1 &= ~1;

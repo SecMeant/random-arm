@@ -6,7 +6,7 @@ extern "C"
 void delay(int t);
 void circle();
 void circleT(int T);
-void circleTC(int T, int C, GPIO* port = GPIOE);
+void circleTC(int T, int C, volatile GPIO* port = GPIOE);
 void circleTC_BSRR(int T, int C);
 void flashT(int T);
 bool isB1Clicked(void);
