@@ -220,6 +220,28 @@ struct _NVIC
 
 volatile _NVIC* NVIC=(_NVIC*)0xe000e004;
 
+// 0x4000 6800 - 0x4000 63FF
+struct _USB
+{
+	uint32_t EP0R;
+	uint32_t EP1R;
+	uint32_t EP2R;
+	uint32_t EP3R;
+	uint32_t EP4R;
+	uint32_t EP5R;
+	uint32_t EP6R;
+	uint32_t EP7R;
+	uint32_t RESERVED[8];
+	uint32_t CNTR;
+	uint32_t ISTR;
+	uint32_t FNR;
+	uint32_t DADDR;
+	uint32_t BTABLE;
+	uint32_t LPMCSR;
+};
+
+volatile _USB * USBFS = (volatile _USB*)(0x40005C00);
+
 void BCTIM::init(void) volatile
 {
 	this->CR1 = 0;
