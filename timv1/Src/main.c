@@ -6,7 +6,7 @@ extern "C"
 void delay(int t);
 void circle();
 void circleT(int T);
-void circleTC(int T, int C, GPIO* port = GPIOE);
+void circleTC(int T, int C, volatile GPIO* port = GPIOE);
 void circleTC_BSRR(int T, int C);
 void flashT(int T);
 bool isB1Clicked(void);
@@ -162,11 +162,15 @@ void HardFault_Handler(void)
 
 void initClock(void)
 {
-	//       Reset state | Enable HSE
-	RCC->CR = 0x00000083 | 0x00010000;
+	RCC->CR = 0x00000083 | // Reset state
+	          0x00010000 | // Enable HSE
+	          0x00000001;  // Enable HSI
 
 	// Wait for hse ready
 	while(not(RCC->CR & 0x00020000));
+
+	// Wait for hsi ready
+	while(not(RCC->CR & 0x00000002));
 
 	// disable pll
 	RCC->CFGR &= 0xfeffffff;
@@ -178,10 +182,12 @@ void initClock(void)
 	//RCC->CFGR = 0x000d0000 // PLL * 5
 	//RCC->CFGR = 0x00110000 // PLL * 6
 	
-  RCC->CFGR = 0x00110000 | // PLL multiplied by 6 ( for some reason crashing when higher ;/ )
+	constexpr unsigned clkmul = 0x11;
+
+  RCC->CFGR = clkmul | // PLL multiplied by 6 ( for some reason crashing when higher ;/ )
               0x00800000 | // I2S is clocked by external clock
               0x00400000 | // USB not prescaled
-              0x00000400 | // APB1 bus clk is divided by 2
+              0x00002c00 | // APB1 and APB2 bus clk is divided by 2
               0x00000002;  // PLL clk for sysclk
  
 	// enable pll
