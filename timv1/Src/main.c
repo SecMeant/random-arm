@@ -15,6 +15,7 @@ void invalidInstr(){asm volatile (".word 0xf7f0a000\n");}
 
 // Interrupt handlers
 void HardFault_Handler(void);
+void TIM7_IRQHandler(void);
 
 void initClock(void);
 void initGPIO(void);
@@ -39,18 +40,11 @@ int main(void)
 	// CNT is clocked with 8MHz so with this config
 	// Clock is flashing about every 2 secs
 	TIM7->PSC = 0xffff;
-	TIM7->ARR = 0x03fc;
+	TIM7->ARR = 0x1fe0;
 	TIM7->reset();	
 
 	while(1)
 	{
-		if(TIM7->SR & 1)
-		{
-			GPIOE->ODR = 0x0000ff00;
-			TIM7->SR = 0;
-			delay(1000000);
-			GPIOE->ODR = 0;
-		}
 	}
 }
 
@@ -133,13 +127,10 @@ void flashT(int T)
 	// Used for turning on leds
 	unsigned leds = 0x0000ff00;
 
-	for(;;)
-	{
-		delay(T);
-		GPIOE->ODR = leds;
-		delay(T);
-		GPIOE->ODR = 0;
-	}
+	delay(T);
+	GPIOE->ODR = leds;
+	delay(T);
+	GPIOE->ODR = 0;
 }
 
 void delay(int t)
@@ -158,6 +149,19 @@ void HardFault_Handler(void)
   {
 		flashT(200000);
   }
+}
+
+void TIM7_IRQHandler(void)
+{
+	flashT(200000);
+
+	// CNT is clocked with 8MHz so with this config
+	// Clock is flashing about every 2 secs
+	TIM7->PSC = 0xffff;
+	TIM7->ARR = 0x00ff;
+	TIM7->reset();
+
+	return;
 }
 
 void initClock(void)
