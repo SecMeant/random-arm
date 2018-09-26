@@ -259,6 +259,9 @@ void BCTIM::reset(void) volatile
 	// stop
 	this->CR1 &= ~1;
 
+	// clear update flag
+	this->SR = 0;
+
 	// reset counting
 	this->CNT = 0;
 
